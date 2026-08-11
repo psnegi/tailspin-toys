@@ -41,7 +41,7 @@ const { game } = Astro.props;
                 {game.starRating === null ? 'No rating yet' : (
                     <>
                         {[...Array(5)].map((_, i) => (
-                            <span class={i < Math.round(game.starRating) ? 'text-amber-400' : 'text-slate-600'} aria-hidden="true">★</span>
+                            <span class={i < Math.round(game.starRating!) ? 'text-amber-400' : 'text-slate-600'} aria-hidden="true">★</span>
                         ))}
                         <span class="sr-only">{game.starRating} out of 5</span>
                     </>
