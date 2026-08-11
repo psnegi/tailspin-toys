@@ -45,6 +45,11 @@ import { asc, count, eq } from 'drizzle-orm';
 import type { Database } from './db';
 import { games } from '../../db/schema';
 
+/**
+ * Return all game ids in stable alphabetical order.
+ * @param db - Injectable Database client (migrated test DB can be supplied in tests)
+ * @returns Array of numeric game ids
+ */
 export async function getAllGameIds(db: Database): Promise<number[]> {
   const rows = await db.select({ id: games.id }).from(games).orderBy(asc(games.title));
   return rows.map((r) => r.id);
@@ -55,6 +60,13 @@ export async function getAllGameIds(db: Database): Promise<number[]> {
 - Map raw rows to the app-facing `Game`/`Publisher`/`Category` types in one place; don't leak Drizzle row shapes into components.
 - Keep ordering/lookup logic in `games.ts`, not in pages.
 
+### Documentation (TSDoc / JSDoc)
+
+- Every exported helper in `db/` and `src/lib/` MUST include a TSDoc/JSDoc block describing purpose, parameters (document the injectable `db` argument), and the return value.
+- Provide explicit parameter and return types on exported functions so the native `tsgo` type checks are precise.
+- Keep inline examples minimal; prefer examples in unit tests for complex usage patterns.
+
+See `.github/instructions/coding-standards.md` for the consolidated guidance on comments and documentation.
 ## Determinism
 
 Seed-derived values must be reproducible across builds. Derive star ratings from a stable hash of the title (`ratingFromTitle`) — **never** `Math.random()`.

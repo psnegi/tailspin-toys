@@ -10,6 +10,10 @@ Tailspin Toys is a crowdfunding platform for games with a developer theme. The p
 - **Vitest** — unit tests for the data layer and pure transforms.
 - **Playwright** — end-to-end tests run against the built static site.
 
+## Coding standards
+
+Repository-wide guidance on commenting, TSDoc/JSDoc expectations, component props documentation, and TypeScript formatting is maintained at `.github/instructions/coding-standards.md`. Please read it before contributing changes that affect exported helpers, database code, or reusable components.
+
 The database is migrated and seeded automatically before `dev`/`build` (via the `predev`/`prebuild` npm scripts) and is written to the gitignored `tailspin.db` file.
 
 ## Using this template

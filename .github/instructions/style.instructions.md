@@ -52,3 +52,11 @@ ALL UI components MUST use dark theme colors:
 - Smooth transitions: `transition-all duration-200 ease-in-out`
 - Shadows for depth: `shadow-md`, `shadow-lg`, `shadow-xl`
 - Focus states for accessibility: `focus:ring-2 focus:ring-blue-500`
+
+## Comments & TypeScript formatting
+
+- Follow the repository-wide comment philosophy: comment *why* not *what*. See `.github/instructions/coding-standards.md` for details.
+- TypeScript formatting preferences should be enforced via ESLint/Prettier rules where possible. Keep exported function signatures explicit so `tsgo` checks pass.
+- When proposing new formatting or lint rules that affect many files, open a follow-up PR that updates rules and fixes code in a single commit to make reviewable changes.
+
+See `.github/instructions/coding-standards.md` for the consolidated guidance on documentation and TSDoc/JSDoc expectations.
