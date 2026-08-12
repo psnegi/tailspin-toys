@@ -4,11 +4,14 @@ import GameCard from '../components/GameCard.astro';
 import PageHero from '../components/PageHero.astro';
 import EmptyState from '../components/EmptyState.astro';
 import { getDatabase } from '../lib/db';
-import { getAllGames } from '../lib/games';
+import { getAllGames, getAllCategories, getAllPublishers } from '../lib/games';
 
 export const prerender = true;
 
-const games = await getAllGames(getDatabase());
+const db = getDatabase();
+const games = await getAllGames(db);
+const categories = await getAllCategories(db);
+const publishers = await getAllPublishers(db);
 ---
 
 <Layout title="Tailspin Toys - Crowdfunding your new favorite game!">
@@ -21,6 +24,31 @@ const games = await getAllGames(getDatabase());
     <div>
       <h2 class="text-2xl font-medium mb-6 text-slate-100">Featured Games</h2>
 
+      <!-- Filter controls -->
+      <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
+        <div class="flex items-center gap-3">
+          <label for="category-filter" class="text-sm text-slate-300">Category</label>
+          <select id="category-filter" data-testid="category-filter" class="ml-2 bg-slate-800 border border-slate-700 text-slate-100 rounded px-3 py-1">
+            <option value="">All</option>
+            {categories.map((c) => (
+              <option value={c.name}>{c.name}</option>
+            ))}
+          </select>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <label for="publisher-filter" class="text-sm text-slate-300">Publisher</label>
+          <select id="publisher-filter" data-testid="publisher-filter" class="ml-2 bg-slate-800 border border-slate-700 text-slate-100 rounded px-3 py-1">
+            <option value="">All</option>
+            {publishers.map((p) => (
+              <option value={p.name}>{p.name}</option>
+            ))}
+          </select>
+        </div>
+
+        <div class="ml-auto text-sm text-slate-400">Showing <span id="visible-count" data-testid="visible-count">{games.length}</span> of {games.length}</div>
+      </div>
+
       {games.length === 0 ? (
         <EmptyState text="No games available at the moment." />
       ) : (
@@ -28,6 +56,40 @@ const games = await getAllGames(getDatabase());
           {games.map((game) => <GameCard game={game} />)}
         </div>
       )}
+
+      <script type="module">
+        const categorySelect = document.getElementById('category-filter');
+        const publisherSelect = document.getElementById('publisher-filter');
+        const grid = document.querySelector('[data-testid="games-grid"]');
+        const visibleCount = document.getElementById('visible-count');
+
+        function filterGames() {
+          const category = categorySelect.value.trim();
+          const publisher = publisherSelect.value.trim();
+          const cards = Array.from(grid.querySelectorAll('[data-testid="game-card"]'));
+          let visible = 0;
+
+          for (const card of cards) {
+            const cardCategory = (card.getAttribute('data-game-category') || '').trim();
+            const cardPublisher = (card.getAttribute('data-game-publisher') || '').trim();
+
+            const categoryMatches = !category || cardCategory === category;
+            const publisherMatches = !publisher || cardPublisher === publisher;
+
+            if (categoryMatches && publisherMatches) {
+              card.style.display = '';
+              visible += 1;
+            } else {
+              card.style.display = 'none';
+            }
+          }
+
+          visibleCount.textContent = String(visible);
+        }
+
+        categorySelect.addEventListener('change', filterGames);
+        publisherSelect.addEventListener('change', filterGames);
+      </script>
     </div>
   </div>
 </Layout>

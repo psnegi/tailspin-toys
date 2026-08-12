@@ -67,3 +67,15 @@ export async function getGameById(db: Database, id: number): Promise<Game | null
     const row = await baseGamesQuery(db).where(eq(games.id, id)).get();
     return row ? mapGame(row) : null;
 }
+
+/** Get all categories (id + name) ordered by name. */
+export async function getAllCategories(db: Database): Promise<{ id: number; name: string }[]> {
+    const rows = await db.select({ id: categories.id, name: categories.name }).from(categories).orderBy(asc(categories.name));
+    return rows.map((r) => ({ id: r.id, name: r.name }));
+}
+
+/** Get all publishers (id + name) ordered by name. */
+export async function getAllPublishers(db: Database): Promise<{ id: number; name: string }[]> {
+    const rows = await db.select({ id: publishers.id, name: publishers.name }).from(publishers).orderBy(asc(publishers.name));
+    return rows.map((r) => ({ id: r.id, name: r.name }));
+}
